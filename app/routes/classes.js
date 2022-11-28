@@ -1,52 +1,92 @@
 const express = require('express');
-const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
+const classeModel = require("../model/classe");
 
 let router = express.Router();
 
-let classes = [];
-
-router.post('/', (request, response) => {
+router.post('/', async (request, response) => {
     const {name} = request.body;
 
-    let classe = {
-        id: uuidv4(),
-        name
-    };
+    try{
+        let classe = await classeModel.create({
+            name: name
+        });
 
+        return response.status(200).json(classe);
+    } catch(error) {
+        return response.status(500).json({
+            msg: error
+        });
+    }
 
-    classes.push(classe);
-    response.status(200).json(classe);
 });
 
-router.get('/', (request, response) => {
-    response.status(200).json(classes);
+router.get('/', async (request, response) => {
+    try{
+        let classe = await classeModel.find();
+
+        return response.status(200).json(classe);
+    } catch(error) {
+        return response.status(500).json({
+            msg: error
+        })
+    }
+    
+    
 });
 
-router.get('/:id', (request, response) => {
+router.get('/:id', async (request, response) => {
     const {id} = request.params;
-
-    let classe = classes.find(item => item.id === id);
-
-    response.status(200).json(classe);
+    try{
+        let classe = await classeModel.findById(id);
+        
+        response.status(200).json(classe);
+    } catch(error) {
+        return response.status(500).json({
+            msg: error
+        })
+    }
+    
 });
 
-router.delete('/:id', (request, response) => {
+router.delete('/:id', async (request, response) => {
     const {id} = request.params;
-
-    classes = classes.filter(object => { return object.id !== id; });
-
-    response.status(200).json(classes);
+    try{
+        let classe = await classeModel.findOneAndDelete({
+            _id: id
+        });
+        
+        response.status(200).json({
+            msg : "Classe bien supprimée !"
+        });
+    } catch(error) {
+        return response.status(500).json({
+            msg: error
+        })
+    }
 });
 
-router.put('/:id', (request, response) => {
+router.put('/:id', async (request, response) => {
     const {id} = request.params;
     const {name} = request.body;
 
-    let classe = classes.find(item => item.id === id);
-
-    classe.name = name;
-
-    response.status(200).json(classe);
+    try{
+        let classe = await classeModel.findOneAndUpdate({
+            _id: id
+        }, {
+            name
+        }, {
+            new: true
+        });
+        
+        response.status(200).json({
+            msg : "Classe mise à jour !"
+        });
+    } catch(error) {
+        return response.status(500).json({
+            msg: error
+        })
+    }
 })
 
 module.exports = router;
