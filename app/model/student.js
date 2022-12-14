@@ -20,7 +20,8 @@ const studentSchema = new mongoose.Schema({
         type: String,
         require: [true, 'Entrez un Nom.'],
         trim: true
-    }
+    },
+    classe: { type: mongoose.Schema.Types.ObjectId, ref: 'Classe'}
 }, {
     timestamps: {
         createdAt: 'created_at',
@@ -28,4 +29,4 @@ const studentSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('student', studentSchema);
+module.exports = mongoose.model('Student', studentSchema);

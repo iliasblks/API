@@ -5,7 +5,8 @@ const classeSchema = new mongoose.Schema({
         type: String,
         require: [true, 'Entrez un nom'],
         trim: true
-    }
+    },
+    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student'}]
 }, {
     timestamps: {
         createdAt: 'created_at',

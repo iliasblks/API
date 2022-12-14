@@ -21,6 +21,26 @@ router.post('/', async (request, response) => {
 
 });
 
+router.post('/add-student', async (request, response) =>{
+    const {studentId, classeId} = request.body;
+    try{
+        classe = await classeModel.findOneAndUpdate({
+            _id : classeId
+        },{
+            students: [studentId]
+        },{
+            new: true
+        }).populate("students");
+        
+        return response.status(200).json(classe);
+
+    }catch(error) {
+        return response.status(500).json({
+            msg: error
+        })
+    }
+});
+
 router.get('/', async (request, response) => {
     try{
         let classe = await classeModel.find();
@@ -31,14 +51,12 @@ router.get('/', async (request, response) => {
             msg: error
         })
     }
-    
-    
 });
 
 router.get('/:id', async (request, response) => {
     const {id} = request.params;
     try{
-        let classe = await classeModel.findById(id);
+        let classe = await classeModel.findById(id).populate("students");
         
         response.status(200).json(classe);
     } catch(error) {
